@@ -17,4 +17,12 @@ const layoutEngine = constructLayoutEngine({ routes, applications });
 
 applications.forEach(registerApplication);
 layoutEngine.activate();
+
+registerApplication(
+  "header",
+  // @ts-ignore
+  () => import("home-nav/Header"),
+  (location) => location.pathname.startsWith("/")
+);
+
 start();

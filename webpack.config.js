@@ -1,6 +1,9 @@
 const { merge } = require("webpack-merge");
 const singleSpaDefaults = require("webpack-config-single-spa-ts");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
+const path = require("path");
+const outputPath = path.resolve(__dirname, "dist");
 
 module.exports = (webpackConfigEnv, argv) => {
   const orgName = "poc-mf-react";
@@ -14,7 +17,22 @@ module.exports = (webpackConfigEnv, argv) => {
 
   return merge(defaultConfig, {
     // modify the webpack config however you'd like to by adding to this object
+    output: {
+      publicPath: "http://localhost:9000/",
+    },
+    resolve: {
+      extensions: [".jsx", ".js", ".json", ".ts", ".tsx"],
+    },
     plugins: [
+      new ModuleFederationPlugin({
+        name: "root",
+        library: { type: "var", name: "root" },
+        filename: "remoteEntry.js",
+        remotes: {
+          "home-nav": "header",
+        },
+        exposes: {},
+      }),
       new HtmlWebpackPlugin({
         inject: false,
         template: "src/index.ejs",
