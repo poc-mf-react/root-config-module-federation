@@ -29,7 +29,6 @@ module.exports = (webpackConfigEnv, argv) => {
     },
 
     output: {
-      path: path.resolve(__dirname, "dist"),
       filename: "main.js",
       publicPath: "http://localhost:9000/",
     },
@@ -45,11 +44,12 @@ module.exports = (webpackConfigEnv, argv) => {
     module: {
       rules: [
         {
-          test: /\.tsx?$/,
-          loader: require.resolve("babel-loader"),
-          options: {
-            presets: [require.resolve("@babel/preset-typescript")],
-          },
+          test: /\.ejs$/,
+          use: [
+            {
+              loader: "ejs-webpack-loader",
+            },
+          ],
         },
       ],
     },
