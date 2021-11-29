@@ -17,11 +17,41 @@ module.exports = (webpackConfigEnv, argv) => {
 
   return merge(defaultConfig, {
     // modify the webpack config however you'd like to by adding to this object
+
+    entry: "./src/index.ejs",
+    cache: false,
+
+    mode: "development",
+    devtool: "source-map",
+
+    optimization: {
+      minimize: false,
+    },
+
     output: {
+      path: path.resolve(__dirname, "dist"),
+      filename: "main.js",
       publicPath: "http://localhost:9000/",
     },
+
     resolve: {
       extensions: [".jsx", ".js", ".json", ".ts", ".tsx"],
+    },
+
+    devServer: {
+      static: outputPath,
+    },
+
+    module: {
+      rules: [
+        {
+          test: /\.tsx?$/,
+          loader: require.resolve("babel-loader"),
+          options: {
+            presets: [require.resolve("@babel/preset-typescript")],
+          },
+        },
+      ],
     },
     plugins: [
       new ModuleFederationPlugin({
@@ -29,7 +59,7 @@ module.exports = (webpackConfigEnv, argv) => {
         library: { type: "var", name: "root" },
         filename: "remoteEntry.js",
         remotes: {
-          "home-nav": "header",
+          "home-nav": "navigation",
         },
         exposes: {},
       }),
